@@ -9,20 +9,22 @@
 'use strict';
 
 module.exports = function(grunt) {
-
+  var remoteAccess = grunt.file.readJSON('remoteAccess.json');
   // Project configuration.
   grunt.initConfig({
-    remoteAccess: grunt.file.readJSON('remoteAccess.json'),
     // Configuration to be run (and then tested).
     katapult: {
-      default_options: {
+      watch: {
         options:{
           verbose:true,
-          username: '<%= remoteAccess.username %>',
-          password: '<%= remoteAccess.password %>',
-          port: '<%= remoteAccess.port %>',
-          type: '<%= remoteAccess.type %>',
-          host: '<%= remoteAccess.host %>'
+          access:remoteAccess,
+          dest: 'tools/testDeploy/'
+        }
+      },
+      upload:{
+        options:{
+          verbose:true,
+          access:remoteAccess
         },
         files: {
           'tools/testDeploy/': ['test/**/*']
@@ -32,7 +34,7 @@ module.exports = function(grunt) {
     watch: { /** Surveillance des fichiers **/
       js:{
         files: ['test/**/*'],
-        tasks: ['katapult'],
+        tasks: ['katapult:watch'],
         options: {
           spawn: false,
         }
@@ -45,16 +47,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadTasks('tasks');
 
-  grunt.event.on('watch', function(action, filepath, target) {
-    var files = {"tools/testDeploy/":filepath};
-    grunt.config('katapult.default_options.files', [files]);
-  });
-
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', [ 'katapult']);
+  grunt.registerTask('deploy', [ 'katapult:upload']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('default', []);
 
 };

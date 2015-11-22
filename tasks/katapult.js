@@ -12,8 +12,11 @@ module.exports = function(grunt) {
 
   var ftpAbstract = require('./ftpAbstract').init(grunt);
 
+  grunt.event.on('watch', function(action, filepath, target) {
+    grunt.config('katapult.watch.files', [{"=":filepath}]);
+  });
+
   grunt.registerMultiTask('katapult', 'Ftp & Sftp deploy', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
     var done = this.async();
     var src;
     var results = {errors:[],success:[]};
@@ -31,13 +34,13 @@ module.exports = function(grunt) {
         }
       });
       ftpAbstract.init({
-        host:options.host,
-        port:options.port,
-        user:options.username,
-        pass:options.password,
-        type:options.type
+        host:options.access.host,
+        port:options.access.port,
+        user:options.access.username,
+        pass:options.access.password,
+        type:options.access.type
       },function(deploy){
-        upload(src,f.dest);
+        upload(src,((f.dest=='=')? options.dest : f.dest));
       });
 
     });
