@@ -29,7 +29,7 @@ katapult: {
     }
   },
 },
-watch: { /** Surveillance des fichiers **/
+watch: {
   js:{
     files: ['test/**/*'],
     tasks: ['katapult:watch'],
