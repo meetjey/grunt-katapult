@@ -13,7 +13,8 @@ module.exports = function(grunt) {
   var ftpAbstract = require('./ftpAbstract').init(grunt);
 
   grunt.event.on('watch', function(action, filepath, target) {
-    grunt.config('katapult.watch.files', [{"=":filepath}]);
+    if(target=='katapult')
+      grunt.config('katapult.watch.files', [{"=":filepath}]);
   });
 
   grunt.registerMultiTask('katapult', 'Ftp & Sftp deploy', function() {
@@ -40,16 +41,23 @@ module.exports = function(grunt) {
         pass:options.access.password,
         type:options.access.type
       },function(deploy){
-        upload(src,((f.dest=='=')? options.dest : f.dest));
+        upload(src,getDest(f,options));
       });
 
     });
+
+    function getDest(f,options){
+      var dest = ((f.dest=='=')? options.dest : f.dest);
+      if(dest.substr(dest.length - 1)!='/')
+        dest+='/';
+      return dest;
+    }
 
     function upload(files,destPath){
       var file = files[0];
       var destFile = destPath + file;
       if(grunt.file.isDir(file)){
-        createTree(dirname(destFile),function(){
+        createTree(destFile,function(){
           ftpAbstract.mkdir(destFile,function(state,error){
             end(file,error,function(){
               upload(src,destPath);

@@ -32,7 +32,7 @@ module.exports = function(grunt) {
       }
     },
     watch: { /** Surveillance des fichiers **/
-      js:{
+      katapult:{
         files: ['test/**/*'],
         tasks: ['katapult:watch'],
         options: {
