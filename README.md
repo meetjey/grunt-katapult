@@ -16,9 +16,9 @@ Once the plugin has been installed, it may be enabled inside your Gruntfile with
 ```js
 grunt.loadNpmTasks('grunt-katapult');
 ```
+You also need `grunt-contrib-watch`,`jsftp` and `ssh2`
 
-
-Example:
+Example watch config:
 ```js
 katapult: {
   watch: {
@@ -28,5 +28,20 @@ katapult: {
       dest: 'remoteDir/'
     }
   },
+},
+```
+
+Example deploy config:
+```js
+katapult: {
+  upload:{
+    options:{
+      verbose:true,
+      access:grunt.file.readJSON('remoteAccess.json')
+    },
+    files: {
+      'remoteDir/': ['localFiles/**/*']
+    }
+  }
 },
 ```
