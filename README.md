@@ -29,7 +29,18 @@ katapult: {
     }
   },
 },
+watch: { /** Surveillance des fichiers **/
+  js:{
+    files: ['test/**/*'],
+    tasks: ['katapult:watch'],
+    options: {
+      spawn: false,
+    }
+  }
+}
 ```
+You have to use "watch" key for katapult configuration to work with `grunt-contrib-watch`.
+
 
 Example deploy config:
 ```js
